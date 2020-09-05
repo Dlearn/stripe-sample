@@ -1,6 +1,7 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
+import "./styles.css";
 
 export default function CheckoutForm() {
   const [succeeded, setSucceeded] = useState(false);

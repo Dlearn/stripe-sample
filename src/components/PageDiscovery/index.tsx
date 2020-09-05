@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Image } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import iconItem0 from "../../images/item0.jpg";
 import iconItem1 from "../../images/item1.jpg";
 import iconItem2 from "../../images/item2.jpg";
@@ -8,16 +9,22 @@ import styles from "./styles.module.css";
 type Item = { id: number; price: number; title: string };
 
 type Props = {
-  items: Item[];
+  items: { [id: number]: Item };
   itemAmounts: { [id: number]: number };
+  setCompletedPaymentIntent: (paymentIntent: string) => void;
   setItemAmounts: (itemAmounts: { [id: number]: number }) => void;
 };
 
 export default function PageDiscovery({
   items,
   itemAmounts,
+  setCompletedPaymentIntent,
   setItemAmounts,
 }: Props) {
+  useEffect(() => {
+    setCompletedPaymentIntent("");
+  }, [setCompletedPaymentIntent]);
+
   const onDecrement = (id: number) => {
     const newItemAmounts = { ...itemAmounts };
     newItemAmounts[id] = itemAmounts[id] - 1;
@@ -34,7 +41,7 @@ export default function PageDiscovery({
     <>
       <h3>Choose your items!</h3>
       <div className={styles.items}>
-        {items.map((item: Item, index: number) => {
+        {Object.values(items).map((item: Item, index: number) => {
           return (
             <ItemCard
               index={index}
@@ -47,7 +54,18 @@ export default function PageDiscovery({
           );
         })}
       </div>
-      <Button>Proceed to checkout</Button>
+      <Link to="/checkout">
+        <Button
+          disabled={
+            Object.values(itemAmounts).reduce(
+              (sum, currAmount) => sum + currAmount,
+              0
+            ) === 0
+          }
+        >
+          Proceed to checkout
+        </Button>
+      </Link>
     </>
   );
 }
@@ -77,6 +95,7 @@ const ItemCard = ({
         <div className={styles.amountSelector}>
           <Button
             className={styles.addMinusButton}
+            disabled={itemAmounts[id] === 0}
             onClick={() => {
               onDecrement(id);
             }}

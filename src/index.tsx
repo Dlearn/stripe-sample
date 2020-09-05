@@ -2,18 +2,21 @@ import "bootstrap/dist/css/bootstrap.css"; // Import bootstrap CSS
 import React, { useEffect, useState } from "react";
 import { Navbar } from "react-bootstrap";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Route, Router, Switch } from "react-router-dom";
 import PageCanceled from "./components/PageCanceled";
 import PageCheckout from "./components/PageCheckout";
 import PageDiscovery from "./components/PageDiscovery";
+import PageSuccess from "./components/PageSuccess";
+import history from "./history";
 import "./index.css";
 import styles from "./styles.module.css";
 
 type Item = { id: number; price: number; title: string };
 
 const App = () => {
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<{ [id: number]: Item }>([]);
   const [itemAmounts, setItemAmounts] = useState<{ [id: number]: number }>({});
+  const [completedPaymentIntent, setCompletedPaymentIntent] = useState("");
 
   // Fetch items from server
   useEffect(() => {
@@ -32,9 +35,8 @@ const App = () => {
         const { items } = data;
         setItems(items);
         const newItemAmounts: { [id: number]: number } = {};
-        items.forEach((item: Item) => {
-          const { id } = item;
-          newItemAmounts[id] = 0;
+        Object.keys(items).forEach((itemId) => {
+          newItemAmounts[parseInt(itemId, 10)] = 0;
         });
         setItemAmounts(newItemAmounts);
       });
@@ -42,7 +44,7 @@ const App = () => {
 
   return (
     <React.StrictMode>
-      <Router>
+      <Router history={history}>
         <Navbar bg="light">
           <Navbar.Brand href="/">Dylan's Shop</Navbar.Brand>
         </Navbar>
@@ -52,11 +54,19 @@ const App = () => {
               <PageDiscovery
                 items={items}
                 itemAmounts={itemAmounts}
+                setCompletedPaymentIntent={setCompletedPaymentIntent}
                 setItemAmounts={setItemAmounts}
               />
             </Route>
             <Route exact path="/checkout">
-              <PageCheckout itemAmounts={itemAmounts} />
+              <PageCheckout
+                itemAmounts={itemAmounts}
+                items={items}
+                setCompletedPaymentIntent={setCompletedPaymentIntent}
+              />
+            </Route>
+            <Route exact path="/success">
+              <PageSuccess completedPaymentIntent={completedPaymentIntent} />
             </Route>
             <Route exact path="/canceled">
               <PageCanceled />

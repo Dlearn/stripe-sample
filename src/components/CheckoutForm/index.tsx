@@ -1,12 +1,18 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
+import history from "../../history";
 import "./styles.css";
 
-type Props = { itemAmounts: { [id: number]: number } };
+type Props = {
+  itemAmounts: { [id: number]: number };
+  setCompletedPaymentIntent: (paymentIntent: string) => void;
+};
 
-export default function CheckoutForm({ itemAmounts }: Props) {
-  const [succeeded, setSucceeded] = useState(false);
+export default function CheckoutForm({
+  itemAmounts,
+  setCompletedPaymentIntent,
+}: Props) {
   const [error, setError] = useState<string | null | undefined>(null);
   const [processing, setProcessing] = useState(false);
   const [disabled, setDisabled] = useState(true);
@@ -30,7 +36,7 @@ export default function CheckoutForm({ itemAmounts }: Props) {
       .then((data) => {
         setClientSecret(data.clientSecret);
       });
-  });
+  }, [itemAmounts]);
 
   const cardStyle = {
     style: {
@@ -67,13 +73,18 @@ export default function CheckoutForm({ itemAmounts }: Props) {
       },
     });
 
-    if (payload.error) {
-      setError(`Payment failed ${payload.error.message}`);
+    const { error, paymentIntent } = payload;
+    if (error) {
+      setError(`Payment failed ${error.message}`);
       setProcessing(false);
     } else {
+      console.log({ payload });
       setError(null);
       setProcessing(false);
-      setSucceeded(true);
+      if (paymentIntent) {
+        setCompletedPaymentIntent(paymentIntent.id);
+        history.push("/success");
+      }
     }
   };
 
@@ -84,7 +95,7 @@ export default function CheckoutForm({ itemAmounts }: Props) {
         options={cardStyle}
         onChange={handleChange}
       />
-      <button disabled={processing || disabled || succeeded} id="submit">
+      <button disabled={processing || disabled} id="submit">
         <span id="button-text">
           {processing ? <div className="spinner" id="spinner"></div> : "Pay"}
         </span>
@@ -95,15 +106,6 @@ export default function CheckoutForm({ itemAmounts }: Props) {
           {error}
         </div>
       )}
-      {/* Show a success message upon completion */}
-      <p className={succeeded ? "result-message" : "result-message hidden"}>
-        Payment succeeded, see the result in your
-        <a href={`https://dashboard.stripe.com/test/payments`}>
-          {" "}
-          Stripe dashboard.
-        </a>{" "}
-        Refresh the page to pay again.
-      </p>
     </form>
   );
 }

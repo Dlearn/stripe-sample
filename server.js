@@ -7,25 +7,23 @@ const stripe = require("stripe")(
 app.use(express.static("."));
 app.use(express.json());
 
-const ITEMS_MAP = {
+const ITEMS = {
   1: { id: 1, price: 10, title: "Climbing Shoes" },
   2: { id: 2, price: 20, title: "iPhone Case" },
 };
-
-const ITEMS_ARRAY = Object.values(ITEMS_MAP);
 
 const calculateOrderAmount = (itemAmounts) => {
   let total = 0;
   const itemIds = Object.keys(itemAmounts);
   itemIds.forEach((itemId) => {
-    total += ITEMS_MAP[itemId].price * itemAmounts[itemId];
+    total += ITEMS[itemId].price * itemAmounts[itemId];
   });
   return total;
 };
 
 app.get("/get-items", async (req, res) => {
   res.send({
-    items: ITEMS_ARRAY,
+    items: ITEMS,
   });
 });
 

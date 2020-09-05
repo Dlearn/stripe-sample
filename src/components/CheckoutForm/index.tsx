@@ -3,7 +3,9 @@ import { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
 import "./styles.css";
 
-export default function CheckoutForm() {
+type Props = { itemAmounts: { [id: number]: number } };
+
+export default function CheckoutForm({ itemAmounts }: Props) {
   const [succeeded, setSucceeded] = useState(false);
   const [error, setError] = useState<string | null | undefined>(null);
   const [processing, setProcessing] = useState(false);
@@ -20,7 +22,7 @@ export default function CheckoutForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ items: [{ id: "xl-tshirt" }] }),
+        body: JSON.stringify({ itemAmounts }),
       })
       .then((res) => {
         return res.json();
@@ -28,7 +30,7 @@ export default function CheckoutForm() {
       .then((data) => {
         setClientSecret(data.clientSecret);
       });
-  }, []);
+  });
 
   const cardStyle = {
     style: {

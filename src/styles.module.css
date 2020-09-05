@@ -1,0 +1,6 @@
+.page {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  padding: 24px;
+}

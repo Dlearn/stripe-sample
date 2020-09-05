@@ -1,0 +1,28 @@
+.items {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.card {
+  width: 200px;
+}
+
+.card:first-child {
+  margin-right: 16px;
+}
+
+.cardDetails {
+  padding: 8px;
+}
+
+.amountSelector {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.addMinusButton {
+  height: 40px;
+  width: 40px;
+}

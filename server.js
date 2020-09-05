@@ -1,35 +1,39 @@
 const express = require("express");
 const app = express();
 const stripe = require("stripe")(
-  "pk_test_51HMxSsCv9X2wnXzjJnMq2wrXjAkt2xIpBvh5R1nyTj5JMyFzue3aaD021xnTywRl08BA0NECpZ2btpMkK0PhgQi500B9DiH329"
+  "sk_test_51HMxSsCv9X2wnXzjSIHSZxEl1eAOMMNPRhhzPAJ8rCJKsfsCUylMtMMuqmzIlupcORwNQPBis8MexlAvhPQAs0wW00XsqPjqBv"
 );
 
 app.use(express.static("."));
 app.use(express.json());
 
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-  return 1400;
+const ITEMS_MAP = {
+  1: { id: 1, price: 10, title: "Climbing Shoes" },
+  2: { id: 2, price: 20, title: "iPhone Case" },
 };
 
-const ITEMS = [
-  { id: 1, price: 10 },
-  { id: 2, price: 20 },
-];
+const ITEMS_ARRAY = Object.values(ITEMS_MAP);
+
+const calculateOrderAmount = (itemAmounts) => {
+  let total = 0;
+  const itemIds = Object.keys(itemAmounts);
+  itemIds.forEach((itemId) => {
+    total += ITEMS_MAP[itemId].price * itemAmounts[itemId];
+  });
+  return total;
+};
 
 app.get("/get-items", async (req, res) => {
   res.send({
-    items: ITEMS,
+    items: ITEMS_ARRAY,
   });
 });
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+  const { itemAmounts } = req.body;
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
+    amount: calculateOrderAmount(itemAmounts),
     currency: "usd",
   });
 

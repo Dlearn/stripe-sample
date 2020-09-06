@@ -1,3 +1,4 @@
+import "@stripe/stripe-js";
 import "bootstrap/dist/css/bootstrap.css"; // Import bootstrap CSS
 import React, { useEffect, useState } from "react";
 import { Navbar } from "react-bootstrap";

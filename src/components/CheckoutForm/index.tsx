@@ -80,7 +80,6 @@ export default function CheckoutForm({
       setError(`Payment failed ${error.message}`);
       setProcessing(false);
     } else {
-      console.log({ payload });
       setError(null);
       setProcessing(false);
       if (paymentIntent) {
@@ -94,7 +93,7 @@ export default function CheckoutForm({
     <form id="payment-form" onSubmit={handleSubmit}>
       <input
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter email address"
+        placeholder="Enter email address (optional)"
         type="email"
         value={email}
       />

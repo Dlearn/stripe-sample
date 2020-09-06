@@ -91,7 +91,7 @@ const ItemCard = ({
       <ImageFromIndex index={index} />
       <div className={styles.cardDetails}>
         <div>{title}</div>
-        <div>${price}</div>
+        <div>${Math.floor(price / 100)}</div>
         <div className={styles.amountSelector}>
           <Button
             className={styles.addMinusButton}

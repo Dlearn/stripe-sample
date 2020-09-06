@@ -5,7 +5,9 @@ export default function PageCanceled() {
   return (
     <>
       <h3>Transaction cancelled</h3>
-      <Button as="a">Back to home</Button>
+      <Button as="a" href="/">
+        Back to home
+      </Button>
     </>
   );
 }

@@ -64,20 +64,26 @@ function Checkout({ itemAmounts, items, setCompletedPaymentIntent }: Props) {
             <tr key={itemId}>
               <td>{items[itemId].title}</td>
               <td>{itemAmounts[itemId]}</td>
-              <td>{items[itemId].price}</td>
+              <td>{Math.floor(items[itemId].price / 100)}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr>
             <td colSpan={2}>Total</td>
-            <td>{calculateOrderAmount(itemAmounts)}</td>
+            <td>{Math.floor(calculateOrderAmount(itemAmounts) / 100)}</td>
           </tr>
         </tfoot>
       </Table>
       <Elements stripe={promise}>
-        <CheckoutForm itemAmounts={itemAmounts} setCompletedPaymentIntent={setCompletedPaymentIntent}/>
+        <CheckoutForm
+          itemAmounts={itemAmounts}
+          setCompletedPaymentIntent={setCompletedPaymentIntent}
+        />
       </Elements>
+      <Button as="a" href="/canceled">
+        Cancel order
+      </Button>
     </div>
   );
 }

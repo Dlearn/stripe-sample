@@ -8,8 +8,8 @@ app.use(express.static("."));
 app.use(express.json());
 
 const ITEMS = {
-  1: { id: 1, price: 10, title: "Climbing Shoes" },
-  2: { id: 2, price: 20, title: "iPhone Case" },
+  1: { id: 1, price: 1000, title: "Climbing Shoes" },
+  2: { id: 2, price: 2000, title: "iPhone Case" },
 };
 
 const calculateOrderAmount = (itemAmounts) => {

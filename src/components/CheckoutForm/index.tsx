@@ -13,10 +13,11 @@ export default function CheckoutForm({
   itemAmounts,
   setCompletedPaymentIntent,
 }: Props) {
+  const [clientSecret, setClientSecret] = useState("");
+  const [disabled, setDisabled] = useState(true);
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null | undefined>(null);
   const [processing, setProcessing] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-  const [clientSecret, setClientSecret] = useState("");
   const stripe = useStripe();
   const elements = useElements();
 
@@ -67,6 +68,7 @@ export default function CheckoutForm({
 
     // @ts-ignore
     const payload = await stripe.confirmCardPayment(clientSecret, {
+      receipt_email: email,
       payment_method: {
         // @ts-ignore
         card: elements.getElement(CardElement),
@@ -90,6 +92,12 @@ export default function CheckoutForm({
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+      <input
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter email address"
+        type="email"
+        value={email}
+      />
       <CardElement
         id="card-element"
         options={cardStyle}

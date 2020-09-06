@@ -2,7 +2,7 @@
 
 ## Installation
 
-- :octocat: Clone this Github repository with `git clone https://github.com/Dlearn/stripe-sample.git`
+- :octocat:Clone this Github repository with `git clone https://github.com/Dlearn/stripe-sample.git`
 - 📂 Navigate into the folder
 - 📝 Run `yarn` to install dependencies
 - ⚡ Run `yarn start` to concurrently run the server and client
@@ -53,15 +53,14 @@ For e-commerce shops that are in multiple countries, they have to implement both
 
 Some e-commerce shops implement subscriptions where the user's card is saved, and the user is charged at a regular interval (every month). This is supported by Stripe, but has not been implemented in this website.
 
-### Idempotency Key
-
-This sample did not implement Idempotency key, more discussion about this [here](#implementing-idempotency-key).
-
 ## How double charging is prevented
 
-There are several ways a user can be double charged for their transaction. The most typical
-A paragraph explaining how the user can protect against double charging of their customers, even in the case of unexpected network issues.
+There are several ways a user can be double charged for their transaction. These are some of the cases and how they are addressed:
 
-### Implementing idempotency key
+1. User clicks on submit twice
 
-If the website receives user reports about double charging, we can implement idempotency key that is created `onPageLoad()`.
+When the submit button is clicked, the app `setProcessing(true)` and disables the submit button. So submitting the form twice should be impossible. If the user somehow submits the form twice, the client would send the same clientSecret, and Stripe will throw an exception for the 2nd submit request, and the user will not be charged twice.
+
+2. User submits the form, the request goes through, but the client does not transition to the success page, and the user submits the form again
+
+In the unlikely case that this happens, the client would send the same clientSecret, and Stripe will throw an exception for the 2nd submit request, and the user will not be charged twice.

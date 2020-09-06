@@ -11,7 +11,7 @@ type Item = { id: number; price: number; title: string };
 type Props = {
   items: { [id: number]: Item };
   itemAmounts: { [id: number]: number };
-  setCompletedPaymentIntent: (paymentIntent: string) => void;
+  setCompletedPaymentIntent: (paymentIntent: { [id: string]: any }) => void;
   setItemAmounts: (itemAmounts: { [id: number]: number }) => void;
 };
 
@@ -22,7 +22,7 @@ export default function PageDiscovery({
   setItemAmounts,
 }: Props) {
   useEffect(() => {
-    setCompletedPaymentIntent("");
+    setCompletedPaymentIntent({});
   }, [setCompletedPaymentIntent]);
 
   const onDecrement = (id: number) => {

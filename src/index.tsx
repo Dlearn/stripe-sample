@@ -16,7 +16,9 @@ type Item = { id: number; price: number; title: string };
 const App = () => {
   const [items, setItems] = useState<{ [id: number]: Item }>([]);
   const [itemAmounts, setItemAmounts] = useState<{ [id: number]: number }>({});
-  const [completedPaymentIntent, setCompletedPaymentIntent] = useState("");
+  const [completedPaymentIntent, setCompletedPaymentIntent] = useState<{
+    [id: string]: any;
+  }>({});
 
   // Fetch items from server
   useEffect(() => {

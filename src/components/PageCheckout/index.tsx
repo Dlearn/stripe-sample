@@ -14,7 +14,7 @@ type Item = { id: number; price: number; title: string };
 type Props = {
   itemAmounts: { [id: number]: number };
   items: { [id: number]: Item };
-  setCompletedPaymentIntent: (paymentIntent: string) => void;
+  setCompletedPaymentIntent: (paymentIntent: { [id: string]: any }) => void;
 };
 
 function Checkout({ itemAmounts, items, setCompletedPaymentIntent }: Props) {
@@ -34,9 +34,9 @@ function Checkout({ itemAmounts, items, setCompletedPaymentIntent }: Props) {
     );
   }
 
-  const itemIds: number[] = Object.keys(itemAmounts).map((itemId) =>
-    parseInt(itemId, 10)
-  );
+  const itemIds: number[] = Object.keys(itemAmounts)
+    .map((itemId) => parseInt(itemId, 10))
+    .filter((itemId) => itemAmounts[itemId] > 0);
 
   const calculateOrderAmount = (itemAmounts: { [id: number]: number }) => {
     let total = 0;
@@ -81,9 +81,7 @@ function Checkout({ itemAmounts, items, setCompletedPaymentIntent }: Props) {
           setCompletedPaymentIntent={setCompletedPaymentIntent}
         />
       </Elements>
-      <Button as="a" href="/canceled">
-        Cancel order
-      </Button>
+      <a href="/canceled">Cancel order</a>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import "./styles.css";
 
 type Props = {
   itemAmounts: { [id: number]: number };
-  setCompletedPaymentIntent: (paymentIntent: string) => void;
+  setCompletedPaymentIntent: (paymentIntent: { [id: string]: any }) => void;
 };
 
 export default function CheckoutForm({
@@ -82,7 +82,7 @@ export default function CheckoutForm({
       setError(null);
       setProcessing(false);
       if (paymentIntent) {
-        setCompletedPaymentIntent(paymentIntent.id);
+        setCompletedPaymentIntent(paymentIntent);
         history.push("/success");
       }
     }

@@ -79,9 +79,9 @@ export default function CheckoutForm({
     if (error || !paymentIntent) {
       const errorMessage =
         (error && error.message) ||
-        "Unexpected error, please send in a support ticket.";
-      // Panic: Send to error logging service
+        "Unexpected error. Please check your email if you have been charged. If you receive no email, contact customer support.";
       setError(`Payment failed: ${errorMessage}`);
+      // Panic: Send to error logging service
       setProcessing(false);
     } else {
       setError(null);
@@ -95,7 +95,8 @@ export default function CheckoutForm({
     <form id="payment-form" onSubmit={handleSubmit}>
       <input
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter email address (optional)"
+        placeholder="Enter email address"
+        required
         type="email"
         value={email}
       />

@@ -21,7 +21,7 @@ export default function PageSuccess({ completedPaymentIntent }: Props) {
             <b> ${Math.floor(completedPaymentIntent.amount / 100)}</b>.
           </p>
           <p>
-            <span>Your order id is: </span>
+            <span>Your Stripe PaymentIntent is: </span>
             <b>{completedPaymentIntent.id}</b>
           </p>
           <p>

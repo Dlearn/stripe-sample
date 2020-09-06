@@ -16,7 +16,7 @@ export default function CheckoutForm({
   const [clientSecret, setClientSecret] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null | undefined>(null);
+  const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
@@ -76,16 +76,18 @@ export default function CheckoutForm({
     });
 
     const { error, paymentIntent } = payload;
-    if (error) {
-      setError(`Payment failed ${error.message}`);
+    if (error || !paymentIntent) {
+      const errorMessage =
+        (error && error.message) ||
+        "Unexpected error, please send in a support ticket.";
+      // Panic: Send to error logging service
+      setError(`Payment failed: ${errorMessage}`);
       setProcessing(false);
     } else {
       setError(null);
       setProcessing(false);
-      if (paymentIntent) {
-        setCompletedPaymentIntent(paymentIntent);
-        history.push("/success");
-      }
+      setCompletedPaymentIntent(paymentIntent);
+      history.push("/success");
     }
   };
 

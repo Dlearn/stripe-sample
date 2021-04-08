@@ -4,9 +4,20 @@ import React, { useEffect, useState } from "react";
 import history from "../../history";
 import "./styles.css";
 
+const MAX_RETRIES = 3;
+
 type Props = {
   itemAmounts: { [id: number]: number };
   setCompletedPaymentIntent: (paymentIntent: { [id: string]: any }) => void;
+};
+
+type StripePayload = {
+  error: {
+    code: string,
+    message: string,
+    type: string
+  },
+  paymentIntent: { [id: string]: any },
 };
 
 export default function CheckoutForm({
@@ -66,14 +77,29 @@ export default function CheckoutForm({
     ev.preventDefault();
     setProcessing(true);
 
-    // @ts-ignore
-    const payload = await stripe.confirmCardPayment(clientSecret, {
-      receipt_email: email,
-      payment_method: {
-        // @ts-ignore
-        card: elements.getElement(CardElement),
-      },
-    });
+    let payload: StripePayload = {
+        error: {
+          code: "",
+          message: "",
+          type: "",
+        },
+      paymentIntent: {},
+    };
+    for(let i=0;i<MAX_RETRIES;i++) {
+      // @ts-ignore
+      payload = await stripe.confirmCardPayment(clientSecret, {
+        receipt_email: email,
+        payment_method: {
+          // @ts-ignore
+          card: elements.getElement(CardElement),
+        },
+      });
+      // If error is retriable, then retry
+      // @ts-ignore
+      if(payload.error.type !== "api_connection_error" || payload.error.type !== "api_error") {
+        break;
+      }
+    }
 
     const { error, paymentIntent } = payload;
     if (error || !paymentIntent) {

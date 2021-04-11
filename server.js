@@ -27,6 +27,20 @@ app.get("/get-items", async (req, res) => {
   });
 });
 
+app.get("/list-payment-intents", async (req, res) => {
+  const { limit = 100 } = req.query;
+  // Manual pagination
+  // const paymentIntents = await stripe.paymentIntents.list({ limit });
+
+  // Auto pagination
+  const paymentIntents = [];
+  for await (const paymentIntent of stripe.paymentIntents.list({ limit })) {
+    paymentIntents.push(paymentIntent);
+  }
+
+  res.send(paymentIntents);
+});
+
 app.post("/create-payment-intent", async (req, res) => {
   const { itemAmounts, uuid } = req.body;
   // Create a PaymentIntent with the order amount and currency

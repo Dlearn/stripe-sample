@@ -59,13 +59,29 @@ export default function PageDiscovery({
           disabled={
             Object.values(itemAmounts).reduce(
               (sum, currAmount) => sum + currAmount,
-              0
+              0,
             ) === 0
           }
         >
           Proceed to checkout
         </Button>
       </Link>
+      <Button
+        onClick={() => {
+          const url =
+            "/list-payment-intents?" + new URLSearchParams({ limit: "100" });
+          window
+            .fetch(url, {
+              headers: { "Content-Type": "application/json" },
+              method: "GET",
+            })
+            .then((res) => {
+              console.log(res.json());
+            });
+        }}
+      >
+        List
+      </Button>
     </>
   );
 }

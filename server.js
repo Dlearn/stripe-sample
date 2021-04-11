@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const stripe = require("stripe")(
-  "sk_test_51HMxSsCv9X2wnXzjSIHSZxEl1eAOMMNPRhhzPAJ8rCJKsfsCUylMtMMuqmzIlupcORwNQPBis8MexlAvhPQAs0wW00XsqPjqBv"
+  "sk_test_51HMxSsCv9X2wnXzjSIHSZxEl1eAOMMNPRhhzPAJ8rCJKsfsCUylMtMMuqmzIlupcORwNQPBis8MexlAvhPQAs0wW00XsqPjqBv",
 );
 
 app.use(express.static("."));
@@ -28,12 +28,15 @@ app.get("/get-items", async (req, res) => {
 });
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { itemAmounts } = req.body;
+  const { itemAmounts, uuid } = req.body;
   // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(itemAmounts),
-    currency: "usd",
-  });
+  const paymentIntent = await stripe.paymentIntents.create(
+    {
+      amount: calculateOrderAmount(itemAmounts),
+      currency: "usd",
+    },
+    { idempotencyKey: uuid },
+  );
 
   res.send({
     clientSecret: paymentIntent.client_secret,

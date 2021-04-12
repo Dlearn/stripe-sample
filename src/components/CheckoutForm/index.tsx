@@ -1,6 +1,7 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElementChangeEvent } from "@stripe/stripe-js";
 import React, { useEffect, useState } from "react";
+import { v4 } from "uuid";
 import history from "../../history";
 import "./styles.css";
 
@@ -23,13 +24,14 @@ export default function CheckoutForm({
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
+    const uuid = v4();
     window
       .fetch("/create-payment-intent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ itemAmounts }),
+        body: JSON.stringify({ itemAmounts, uuid }),
       })
       .then((res) => {
         return res.json();

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const stripe = require("stripe")(
-  "sk_test_51HMxSsCv9X2wnXzjSIHSZxEl1eAOMMNPRhhzPAJ8rCJKsfsCUylMtMMuqmzIlupcORwNQPBis8MexlAvhPQAs0wW00XsqPjqBv"
+  "sk_test_51HMxSsCv9X2wnXzjSIHSZxEl1eAOMMNPRhhzPAJ8rCJKsfsCUylMtMMuqmzIlupcORwNQPBis8MexlAvhPQAs0wW00XsqPjqBv",
 );
 
 app.use(express.static("."));
@@ -33,11 +33,37 @@ app.post("/create-payment-intent", async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(itemAmounts),
     currency: "usd",
+    customer: "cus_JIGdvubDTkOefG",
   });
 
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
+});
+
+app.post("/charge", async (req, res) => {
+  const { data } = await stripe.paymentMethods.list({
+    customer: "cus_JIGdvubDTkOefG",
+    type: "card",
+  });
+  console.log(data);
+  try {
+    const paymentMethodId = data[0].id;
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 1099,
+      currency: "sgd",
+      customer: "cus_JIGdvubDTkOefG",
+      payment_method: paymentMethodId,
+      off_session: true,
+      confirm: true,
+    });
+  } catch (err) {
+    console.log("Error code is: ", err.code);
+    const paymentIntentRetrieved = await stripe.paymentIntents.retrieve(
+      err.raw.payment_intent.id,
+    );
+    console.log("PI retrieved ", paymentIntentRetrieved.id);
+  }
 });
 
 app.listen(4242, () => console.log("Node server listening on port 4242!"));

@@ -69,11 +69,16 @@ export default function CheckoutForm({
     // @ts-ignore
     const payload = await stripe.confirmCardPayment(clientSecret, {
       receipt_email: email,
-      payment_method: {
-        // @ts-ignore
-        card: elements.getElement(CardElement),
-      },
+      // @ts-ignore
+      // Use card
+      // payment_method: {
+      // card: elements.getElement(CardElement),
+      // },
+      // Use saved Payment Method
+      payment_method: "pm_1IfgQ1Cv9X2wnXzjg06taQs3",
+      setup_future_usage: "off_session",
     });
+    console.log({ payload });
 
     const { error, paymentIntent } = payload;
     if (error || !paymentIntent) {

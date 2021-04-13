@@ -59,13 +59,26 @@ export default function PageDiscovery({
           disabled={
             Object.values(itemAmounts).reduce(
               (sum, currAmount) => sum + currAmount,
-              0
+              0,
             ) === 0
           }
         >
           Proceed to checkout
         </Button>
       </Link>
+      <Button
+        onClick={() => {
+          window
+            .fetch("/charge", {
+              method: "POST",
+            })
+            .then((res) => {
+              console.log({ res });
+            });
+        }}
+      >
+        Charge off session
+      </Button>
     </>
   );
 }

@@ -76,7 +76,6 @@ export default function CheckoutForm({
       // },
       // Use saved Payment Method
       payment_method: "pm_1IfgQ1Cv9X2wnXzjg06taQs3",
-      setup_future_usage: "off_session",
     });
     console.log({ payload });
 
